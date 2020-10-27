@@ -624,15 +624,14 @@ switch(score/10){
 
 
 
-
-
 ## for 循环
 
-
+`for(;;)`和`while(true)`的效果一样
 
 ```java
 class ForTest{
     public static void main(String[] args){
+        //正经版
         for(int i = 1;i < 5;i++){
             System.out.println("Ha");
         }
@@ -642,6 +641,92 @@ class ForTest{
         for(System.out.print('a');num<=3;System.out.print('b'),num++){
             System.out.print('c');
         }
+    }
+}
+```
+
+
+
+## while 循环
+
+`for(;;)`和`while(true)`的效果一样
+
+先判断后执行
+
+```java
+class WhileTest{
+    public static void main(String[] args){
+        int i = 0;
+        while(i < 100){
+            if(i % 2==10){
+                System.out.println(i);
+            }
+            i+=2;
+        }
+    }
+}
+```
+
+
+
+
+
+## do-while 循环
+
+先执行后判断
+
+```java
+class DoWhileTest{
+    public static void main(String[] args){
+        int i = 0;
+        do{
+            if(i % 10 ==0){
+                System.out.println(i);
+            }
+            i+=2;
+        }while(i<100);
+    }
+}
+```
+
+
+
+## break & continue 贴标签
+
+- 基本用法，略过
+- 贴标签
+
+```java
+label:for (int i = 1;i <= 4;i++){
+    for(int j = 1;j <= 10;j++){
+        if(j % 4==0){
+            //结束指定标识的一层循环
+            break label;//结束了最外层名为label的循环
+        }
+        System.out.println("i="+i+",j="+j);
+    }
+}
+```
+
+```java
+//统计100以内质数的个数
+class PrimeNumber{
+    public static void main(String[] args){
+        //获取当前时间距离1970-01-01 00:00:00 的毫秒数i
+        long start = System.currentTimeMillis();
+        int count = 0;
+        label:for(int i = 1;i <= 100;i++){
+            for(int j = 2;j <= Math.sqrt(i);j++){
+                if(i % j ==0){
+                    continue label;
+                }
+                count++;
+            }
+        }
+        //获取当前时间距离1970-01-01 00:00:00 的毫秒数
+            long end = System.currentTimeMillis();
+            System.out.println("质数个数为："+count);
+            System.out.println("所花费时间="+(end-start));
     }
 }
 ```
