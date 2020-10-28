@@ -522,7 +522,7 @@ else//归属if(y>2)
 ## Scanner类
 
 ```java
-simport java.util.Scanner;
+import java.util.Scanner;
 class ScannerTest{
     public static void main(String[] args){
         Scanner scan = new Scanner(System.in);
