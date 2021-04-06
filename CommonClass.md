@@ -107,9 +107,38 @@ public void test(){
 
 
 
+### String的常用方法
+
+```java
+int length() //返回字符串的长度
+char charAt(int index) //返回某索引处的字符
+boolean isEmpty() //判断是否为空字符串
+String toLowerCase() //将String中所有字符转换为小写
+String toUpperCase() //将String中所有字符转换为大写
+String trim() //返回字符串副本，忽略前面和尾部空白
+boolean equals(Obj object) //比较字符串的内容是否相同
+boolean equalsIgnoreCase(String anotherString) //与equals类似，忽略大小写
+String concat(String str) //将指定字符串连接到此字符串的结尾。等价于“+”
+int compareTo(String anotherString) //比较两个字符串大小
+String substring(int beginIndex) //返回了一个新的字符串，它是从beginIndex开始截取到最后一个的字符串
+String substring(int beginIndex,int endIndex) //返回了一个新的字符串，它是从beginIndex开始截取到endIndex(不包含)的一个字符串
+```
 
 
 
+```java
+boolean endsWith(String suffix)//测试此字符串是否以指定的后缀结束
+boolean startsWith(String prefix)//测试此字符串是否以指定的前缀开始
+boolean startsWith(String prefix,int toffset)//测试此字符串从指定索引处开始的子字符串，是否以指定的前缀开始
+    
+boolean contains(CharSequence s)//当且仅当此字符串包含指定的char值序列，返回true
+int IndexOf(String str) //返回指定字符串在此字符串中第一次出现处的索引
+int IndexOf(String str,int fromIndex) //返回指定字符串在此字符串中第一次出现处的索引,从指定索引开始
+int lastIndexOf(String str)//返回指定子字符串在此字符串中，最右边时出现的索引//即从后往前找，返回的索引还是从左往右的
+int lastIndexOf(String str,int fromIndex)//返回指定子字符串在此字符串中，最后一次出现时的索引，从指定索引处反向搜索
+
+//IndexOf和lastIndexOf方法如果未找到都是返回-1
+```
 
 
 
