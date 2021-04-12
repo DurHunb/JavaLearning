@@ -623,10 +623,25 @@ public final void setTime(Date date)
 >
 > 分别表示公历的日期、时间、日期和时间
 
-
+- `LocalDateTime`使用的频率较高
 
 ```java
+    @Test
+    public void test(){
+        //now,获取当前的日期、时间、日期+时间
+        LocalDate localDate = LocalDate.now();
+        System.out.println(localDate);//2021-04-12
 
+        LocalTime localTime = LocalTime.now();
+        System.out.println(localTime);//17:30:47.467
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(localDateTime);//2021-04-12T17:30:47.468
+
+        //设置指定的年月日
+        LocalDateTime localDateTime1 = LocalDateTime.of(2020, 10, 1, 12, 00, 00);
+        System.out.println(localDateTime1);
+    }
 ```
 
 
