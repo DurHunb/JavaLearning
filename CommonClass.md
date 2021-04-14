@@ -593,6 +593,7 @@ public final void setTime(Date date)
         System.out.println(days);//8（今天是四月八号）
 
         //set()
+        //Calendar的可变性，把本身给改了
         calendar.set(Calendar.DAY_OF_MONTH,22);//设置属性为22
         System.out.println(calendar.get(Calendar.DAY_OF_MONTH));//22
 
@@ -617,8 +618,12 @@ public final void setTime(Date date)
 
 
 
-## Java.time
+## Java.time`(建议)`
 
+### LocalDateTime类
+
+> JDK1.8之后为了弥补Date、simpleDateFormat、Calendar的缺陷而创建的
+>
 > LocalDate、LocalTime、LocalDateTime类的实例是不可变对象，
 >
 > 分别表示公历的日期、时间、日期和时间
@@ -627,20 +632,123 @@ public final void setTime(Date date)
 
 ```java
     @Test
-    public void test(){
-        //now,获取当前的日期、时间、日期+时间
+    public void localDateTest(){
+        //创建对象:now,获取当前的日期、时间、日期+时间
         LocalDate localDate = LocalDate.now();
-        System.out.println(localDate);//2021-04-12
+        System.out.println("localDate:"+localDate);//2021-04-12
 
         LocalTime localTime = LocalTime.now();
-        System.out.println(localTime);//17:30:47.467
+        System.out.println("localDate:"+localTime);//17:30:47.467
 
-        LocalDateTime localDateTime = LocalDateTime.now();
-        System.out.println(localDateTime);//2021-04-12T17:30:47.468
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        System.out.println("localDateTime:"+localDateTime1);//2021-04-12T17:30:47.468
 
         //设置指定的年月日
-        LocalDateTime localDateTime1 = LocalDateTime.of(2020, 10, 1, 12, 00, 00);
-        System.out.println(localDateTime1);
+        LocalDateTime localDateTime2 = LocalDateTime.of(2020, 10, 1, 12, 00, 00);
+        System.out.println("指定的localDateTime:"+localDateTime2);
+
+        //getXxx
+        System.out.println("当前月份的第几天:"+localDateTime1.getDayOfMonth());
+        System.out.println("当前的星期几:"+localDateTime1.getDayOfWeek());
+        System.out.println("当前月份的英文:"+localDateTime1.getMonth());
+        System.out.println("当前月份的数字:"+localDateTime1.getMonthValue());
+        System.out.println("当前时间的分钟:"+localDateTime1.getMinute());
+
+        //体现和String一样的不可变性，原本的localDateTime1不变，新建的localDateTime3存储。
+        //Calendar的set把它本身给改了
+        //withXxx 修改属性
+        LocalDateTime localDateTime3 = localDateTime1.withDayOfMonth(27);//修改当前日期为27号
+        System.out.println("原本的："+localDateTime1);
+        System.out.println("修改后的："+localDateTime3);
+
+        //仍然体现不可变性,相加
+        LocalDateTime localDateTime4 = localDateTime1.plusMonths(1);//加一月
+        System.out.println("当前时间加一月："+localDateTime4);
+
+        //仍然体现不可变性,相减
+        LocalDateTime localDateTime5 = localDateTime1.minusMonths(1);//减一月
+        System.out.println("当前时间减一月："+localDateTime5);
+        
+    }
+```
+
+
+
+### Instant类
+
+> Instant表示时间线上的一个瞬时点。这可能被用来记录应用程序中的时间戳。
+>
+> java.time通过值类型Instant提供机器视图，不提供处理人类意义上的时间单位。Instant表示时间上的一点，而不需要任何上下文信息。Instant的精度可以达到纳秒级。
+
+
+
+```java
+    @Test
+    public void instantTest(){
+        //获取本初子午线对应的时间
+        Instant instant1 = Instant.now();//返回默认UTC时区的Instant类对象
+        System.out.println(instant1);//2021-04-13T09:00:58.769Z
+
+        //添加时间的偏移量
+        OffsetDateTime offsetDateTime = instant1.atOffset(ZoneOffset.ofHours(8));
+        System.out.println(offsetDateTime);//2021-04-13T17:00:58.769+08:00
+
+        //toEpochMilli():获取瞬时点自1970年1月1日0时0分0秒(UTC)后的毫秒数，时间戳
+        //类似Date类的getTime()
+        long milli = instant1.toEpochMilli();
+        System.out.println(milli);//1618304458769
+
+        //ofEpochMilli(long mills):通过时间戳,获得Instant实例
+        //类似Date类的初始化 Date(long mills)
+        Instant instant2 = Instant.ofEpochMilli(1618304165292L);
+        System.out.println(instant2);//2021-04-13T08:56:05.292Z
+    }
+```
+
+
+
+
+
+### DateTimeFormatter类
+
+> 格式化或解析日期、时间
+
+```java
+    @Test
+    public void DateTFormatterTest(){
+
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("now:"+now+'\n');
+
+//        方式一:预定义的标准格式。
+//        如:ISO_LOCAL_DATE_TIME;ISO_LOCAL_DATE;ISO_LOCAL_TIME
+        DateTimeFormatter formatter1 = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        //格式化：日期----->字符串
+        String str1 = formatter1.format(now);
+        System.out.println("str1:"+str1);
+        //解析：字符串---->日期
+        TemporalAccessor parse1 = formatter1.parse("2021-04-13T17:48:09.946");
+        System.out.println("parse1:"+parse1+'\n');
+
+//        方式二:本地化相关的格式。
+//        如:ofLocalizedDateTime(FormatStyle.LONG) 或者 FormatStyle.SHORT、FormatStyle.LONG、FormatStyle.MEDIUM
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
+        //格式化：日期----->字符串
+        String str2 = formatter2.format(now);
+        System.out.println("str2:"+str2);
+        //解析：字符串---->日期
+        TemporalAccessor parse2 = formatter2.parse("21-4-13 下午6:42");
+        System.out.println("parse2:"+parse2+'\n');
+
+//        (常用)方式三:自定义格式
+//        如:ofPattern("yyyy-MM-dd hh:mm:ss E")
+        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss E");
+        //格式化：日期----->字符串
+        String str3 = formatter3.format(now);
+        System.out.println(str3);
+        //解析：字符串---->日期
+        TemporalAccessor parse3 = formatter3.parse("2021-04-13 06:56:42 星期二");
+        System.out.println(parse3);
     }
 ```
 
@@ -650,27 +758,105 @@ public final void setTime(Date date)
 
 
 
+# 三、Java比较器
+
+> Java中的对象，正常情况下，只能用`==`或`!=`。不能使用`>`或`<`。
+>
+> 但是在开发场景中，需要进行对象之间的比较排序
+>
+> - 自然排序：`java.lang.Comparable`
+> - 定制排序：`java.util.Comparator`
+
+
+
+## Comparable接口
+
+自然而然的调用排序
+
+- 像String、包装类等实现了Comparable接口，重写了 compareTo(obj)方法，能够比较两个对象大小。、、
+- String、包装类等重写了 compareTo(obj)方法，进行从小到大排列
+- 重写compareTo()的规则
+  - 如果当前对象this大于形参对象obj，则返回正整数
+  - 如果当前对象this小于形参对象obj，则返回负整数
+  - 如果当前对象this等于形参对象obj，则返回零
+
+```java
+    @Test
+    public void test1(){
+        String[] arr = new String[]{"AA","CC","KK","MM","GG","JJ","DD"};
+        //默认从小到大排序
+        Arrays.sort(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+```
+
+- 对于自定义类，如果需要排序，可以让自定义类实现Comparable接口，重写compareTo(obj)方法
+
+```java
+	//例如，在Goods类中重写compareTo(obj)方法
+	//商品排序，先按照价格排序，再按照产品名称排序，再按照...
+	@Override
+    public int compareTo(Object o) {
+        if (o instanceof Goods){
+            Goods goods = (Goods)o;
+            //方式一
+            if (this.price>goods.price){
+                //todo
+                return 1;
+            }else if (this.price<goods.price){
+                //todo
+                return -1;
+            }else {
+                //todo
+                return 0;
+            }
+        }
+    }
+```
+
+```java
+    @Test
+    public void test1(){
+        Goods[] arr = new Goods[]{good1,good2,good3,good4,good5};
+        Arrays.sort(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+```
 
 
 
 
 
+## Comparator接口
+
+ - 当元素的类型没有实现Comparable接口而又不方便修改代码，或者实现了Comparable接口但是排序规则不符合当前操作，那么可以考虑用Comparator的对象来排序
+ - 重写`Compare(Object1,Object2)`方法，比较o1和o2的大小
+   - 如果方法返回正整数，则表示o1>o2
+   - 如果方法返回负整数，则表示o1<o2
+   - 如果方法返回0，则表示o1与o2相等
+ - 可以将`Comparator`的对象传递给sort方法（如：`Collections.sort`或`Arrays.sort`）
+
+```java
+    @Test
+    public void test2(){
+        String[] arr = new String[]{"AA","CC","KK","MM","GG","JJ","DD"};
+        Arrays.sort(arr, new Comparator<String>() {//泛型
+            //按照字符串从大到小的顺序
+            @Override
+            public int compare(String o1, String o2) {
+                return -o1.compareTo(o2);
+            }
+        });
+        System.out.println(Arrays.toString(arr));
+    }
+```
 
 
 
 
 
+对比：
 
-
-
-
-
-
-
-
-
-
-
-
-
+- Comparable接口一旦设置好，可以在任何位置都可以比较大小
+- Comparator接口属于临时性比较
 
