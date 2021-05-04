@@ -23,7 +23,9 @@
 
 ### Collection接口常用方法
 
-> 如果添加的元素有自定义类，需要重写其equals方法
+> Collection是单列数据,区别于Map【key-value键值对】【双列数据】
+
+> <font color='red'>如果添加的元素有自定义类，需要重写其equals方法</font>
 
 ```java
     @Test
@@ -238,7 +240,7 @@
 >
 > 相对静态数组而言可以扩展长度，称作”动态数组“。
 
-
+>  <font color='red'>向List中添加的自定义数据，其所在的类一定要重写`equals()`。</font>
 
 ### 实现类—ArrayList
 
@@ -349,7 +351,6 @@ List三种遍历方式
 >
 > Set接口没有新的方法，即与Collection接口的方法一致.
 >
-> - 向Set中添加的数据，其所在的类一定要重写`hashCode()`和`equals()`。
 
 
 
@@ -359,6 +360,8 @@ List三种遍历方式
 
 
 ### 实现类-HashSet
+
+> <font color='red'>向HashSet中添加的数据，其所在的类一定要重写`hashCode()`和`equals()`。</font>
 
 添加元素的过程：
 
@@ -398,7 +401,7 @@ List三种遍历方式
 
 > `LinkedHashSet`是`HashSet`的子类。
 >
-> 在`HashSet`的基础上，`LinkedHashSet`提供了双向链表，存储的元素多了前节点和后节点，从而有顺序。
+> 在`HashSet`的基础上，`LinkedHashSet`提供了双向链表，存储的元素多了前节点和后节点，从而实现有顺序。
 
 <img src="D:\ForLife\Learning\JavaLearning\Java集合.assets\image-20210429172315141.png" alt="image-20210429172315141" style="zoom:33%;" />
 
@@ -410,11 +413,22 @@ List三种遍历方式
 
 > `TreeSet`是`SortedSet`接口的实现类，底层使用红黑树结构存储数据。
 >
-> `TreeSet`两种排序方法：自然排序和定制排序，默认自然排序
+> `TreeSet`两种排序方法：自然排序和定制排序，默认自然排序。添加元素时自动排序。
 
 
 
-> 向TreeSet中添加对象，要求是==相同类==的对象。
+> <font color='red'>向TreeSet中添加的数据，其所在的类一定要继承Comparable或者Comparator。</font>
+
+
+
+`TreeSet`方法通过排序方法实现去重。
+
+- 如果自定义类里`comparaTo`方法只定义了姓名的比较，没有定义年龄的比较，则当两个对象姓名一样年龄不一样时，会进行去重。
+- 如果姓名和年龄都定义了比较，那么则不会去重
+
+
+
+> 向`TreeSet`中添加的对象，要求是==相同类==的对象。
 
 ```java
     @Test
@@ -435,10 +449,11 @@ List三种遍历方式
 
 #### 自然排序
 
-> 在自然排序中，比较两个对象是否相同的标准为：compareTo返回0，不再是equals方法
+> 在自然排序中，比较两个对象是否相同的标准为：compareTo返回0。不再是equals方法
 
 ```java
 //需要Person继承Comparable接口，重写compareTo方法 
+//如在new TreeSet()中不加参数，则默认自然排序，即调用compareTo方法
 	@Test
     public void test() {
         TreeSet set = new TreeSet();
@@ -458,7 +473,39 @@ List三种遍历方式
 
 #### 定制排序
 
-> 与常用类的Comparable接口和Comparator接口用法一致
+```java
+@Test
+public void test2(){
+    Comparator com = new Comparator(){
+        @Override
+        public int compare(Object o1,Object o2){
+            if(o1 instanceof Person && o2 instanceof Person){
+				Person p1 = (Person)o1;
+                Person p2 = (Person)o2;
+                return p1.name.compareTo(p2.name)
+        	}
+        	//return 0;
+            throw new RunTimeException("传入数据类型不一致");
+        }
+    }
+    //加了参数，按参数进行排序
+    TreeSet set = new TreeSet(com);
+    
+    set.add(new Person("Tim",13));
+    set.add(new Person("Jerry",23));
+    set.add(new Person("amy",32));
+    Iterator iterator = set.iterator();
+    while (iterator.hasNext()) {
+        System.out.println(iterator.next());
+    }
+}
+```
+
+
+
+
+
+
 
 # Map接口
 
@@ -468,11 +515,35 @@ List三种遍历方式
 
 
 
-- HashMap
-- LinkedHashMap
-- TreeMap
-- Hashtable
-- Properties
+
+
+### 实现类—HashMap
+
+
+
+
+
+### 实现类—LinkedHashMap
+
+
+
+
+
+### 实现类—TreeMap
+
+> `TreeMap`是`SortedSet`接口的实现类，底层使用红黑树结构存储数据。
+>
+> `TreeMap`两种排序方法：自然排序和定制排序，默认自然排序。添加元素时自动排序。
+
+
+
+### 实现类—Hashtable（根本不用）
+
+> 子类—Properties
+
+
+
+
 
 
 
@@ -524,7 +595,23 @@ List三种遍历方式
 
 
 
+## Map中的异同
 
+- `HashMap`：作为Map的主要实现类；线程不安全，效率高；可以存储`key为null`或者`value为null`的数据
+
+  - `LinkedHashMap`：保证在遍历map元素时，可以按照添加的顺序实现遍历。
+
+    ​						原因：在原有HashMap底层结构基础上，添加了一对指针，指向前一个和后一个元素。
+
+    ​						对于频繁的遍历，效率高于HashMap
+
+- `TreeMap`：可以按照添加的key-value进行排序，实现排序遍历。
+
+  ​					此时考虑key的自然排序或者定制排序。
+
+- `HashTable`：作为古老的实现类；线程安全，效率低；不可以存储`key为null`或者`value为null`的数据
+
+  - Properties
 
 
 
