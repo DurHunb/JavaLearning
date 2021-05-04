@@ -14,7 +14,7 @@
 
 - String对象的字符内容是存储在一个字符数组Value[]中的
 
-![image-20210322112431003](D:\ForLife\Learning\JavaLearning\CommonClass.assets\image-20210322112431003.png)
+![image-20210322112431003](.\CommonClass.assets\image-20210322112431003.png)
 
 - String实现了`Serializable`接口，表示字符串是支持序列化的
 
@@ -63,7 +63,7 @@ public void test(){
 
 > 接 System.out.println(p1.name == p2.name)
 >
-> <img src="D:\ForLife\Learning\JavaLearning\CommonClass.assets\image-20210326160822257.png" alt="image-20210326160822257" style="zoom: 40%;" />
+> <img src=".\CommonClass.assets\image-20210326160822257.png" alt="image-20210326160822257" style="zoom: 70%;" />
 
 
 

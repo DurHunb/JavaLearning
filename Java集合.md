@@ -19,7 +19,7 @@
 
 
 
-<img src="D:\ForLife\Learning\JavaLearning\Java集合.assets\image-20210422205658860.png" alt="image-20210422205658860" style="zoom: 40%;" />
+<img src=".\Java集合.assets\image-20210422205658860.png" alt="image-20210422205658860" style="zoom: 40%;" />
 
 ### Collection接口常用方法
 
@@ -350,7 +350,6 @@ List三种遍历方式
 > 元素无序、不可重复的集合。
 >
 > Set接口没有新的方法，即与Collection接口的方法一致.
->
 
 
 
@@ -403,7 +402,7 @@ List三种遍历方式
 >
 > 在`HashSet`的基础上，`LinkedHashSet`提供了双向链表，存储的元素多了前节点和后节点，从而实现有顺序。
 
-<img src="D:\ForLife\Learning\JavaLearning\Java集合.assets\image-20210429172315141.png" alt="image-20210429172315141" style="zoom:33%;" />
+<img src=".\Java集合.assets\image-20210429172315141.png" alt="image-20210429172315141" style="zoom:33%;" />
 
 
 
@@ -511,7 +510,7 @@ public void test2(){
 
 > 保存具有映射关系"key-value"的集合
 
-<img src="D:\ForLife\Learning\JavaLearning\Java集合.assets\image-20210422205621284.png" alt="image-20210422205621284" style="zoom:40%;" />
+<img src=".\Java集合.assets\image-20210422205621284.png" alt="image-20210422205621284" style="zoom:40%;" />
 
 
 
