@@ -514,6 +514,22 @@ public void test2(){
 
 
 
+#### Map结构
+
+<img src=".\Java集合.assets\image-20210505002333154.png" alt="image-20210422205621284" style="zoom:40%;" />
+
+- Map中的`key`：无序的、不可重复的，故使用Set存储所有的key
+	- HashMap：<font color='red'>key所在的类要重写`equals()`和`hashCode()`方法</font>
+	- TreeMap：<font color='red'>向TreeMap中添加的数据，其所在的类一定要继承Comparable或者Comparator。</font>
+- Map中的`value`：无序的、可重复的，故使用Collection存储所有的value
+	- <font color='red'>value所在的类要重写`equals()`方法</font>
+
+一个键值对：key-value构成了一个Entry对象
+
+- Map中的`Entry`：无序的、不可重复的，故使用Set存储所有的`Entry`
+
+
+
 
 
 ### 实现类—HashMap
@@ -637,3 +653,49 @@ private static void updateList(List list) {
     }
 ```
 
+
+
+
+
+## HashMap的底层实现原理
+
+ **以JDK-7为例说明**
+
+```java
+HashMap map = new HashMap();
+```
+
+在实例化以后，底层创建了长度是16的一维数组 `Entry[] table`
+
+【可能经过了多次put】
+
+```java
+map.put(key1,value1);
+```
+
+首先，调用key1所在类的`hashCode()`计算key1的哈希值。
+
+然后，使用该哈希值经过某种算法计算以后，得到在`Entry`数组中的存放位置。
+
+- 如果此位置上的数据为空，此时的`key1-value1`添加成功
+- 如果此位置上的数据不为空【此位置存在一个或多个数据（以链表形式存在）】，需要比较key1和已经存在数据的哈希值
+	- 如果`key1`的哈希值和已存在数据的哈希值都不相同，此时`key1-value1`添加成功
+	- 如果`key1`的哈希值和某个数据的哈希值相同，则继续比较，调用`key1`所在类的`equals()`方法
+		- 如果`equals()`返回`false`，此时的`key1-value1`添加成功
+		- 如果`equals()`返回`true`，则使用`value1`替换此`相同key`的value值【即修改value值】
+
+> 默认扩容方式：扩容为原来的两倍，并将原本的数据复制过来
+
+ **相较JDK-7，JDK-8的区别**
+
+- `new HashMap()`：底层还没有创建一个长度为16的数组
+
+- JDK-8底层的数组是` Node[]`，而非`Entry[]`
+
+- 首次调用`put()`方法时，底层创建长度为16的数组
+
+- JDK-7底层结构只有数组+链表。JDK-8底层结构：数组+链表+红黑树
+
+	- 当数组的某一个索引位置的元素，以链表形式存在的数据个数 > 8且当前数组的长度 > 64时，
+
+		此时此索引位置上所有数据改为使用红黑树存储
