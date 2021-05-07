@@ -242,6 +242,22 @@
 
 >  <font color='red'>向List中添加的自定义数据，其所在的类一定要重写`equals()`。</font>
 
+
+
+### `ArrayList`、`LinkedList`、`Vector`三者的异同
+
+相同：三个类都实现了List接口，都是存储有序、可重复的数据
+
+不同：
+
+- `ArrayList`：List接口的主要实现类；线程不安全，效率高；底层使用Object[ ]存储。
+- `LinkedList`：对于频繁的插入、删除操作，使用此类比`ArrayList`高；底层使用双层链表存储。
+- `Vector`：List接口的古老实现类；线程安全，效率低；底层使用Object[ ]存储。
+
+
+
+
+
 ### 实现类—ArrayList
 
 `ArrayList`源码分析：
@@ -354,7 +370,16 @@ List三种遍历方式
 
 
 - 无序性：根据哈希值来添加存储，而不是根据索引顺序添加
+
 - 不可重复性：保证添加的元素，按照equals方法判断时，不能返回true
+
+  
+
+### `HashSet`、`LinkedHashSet`、`TreeSet`三者的异同
+
+- `HashSet`：作为Set接口的主要实现类；线程不安全；可以存储Null值
+  - `LinkedHashSet`：作为`HashSet`的子类；遍历内部数据时，可以按照添加的顺序遍历；对于频繁的遍历操作，`LinkedHashSet`高于`HashSet`
+- `TreeSet`：可以按照添加元素的指定属性，进行排序
 
 
 
@@ -364,7 +389,7 @@ List三种遍历方式
 
 添加元素的过程：
 
-> HashSet底层：数组+链表的结构。
+> HashSet底层为HashMap：数组+链表的结构。
 
 - 我们向HashSet中添加元素a
 
@@ -530,15 +555,75 @@ public void test2(){
 
 
 
+## Map接口的方法
+
+
+
+```java
+//添加、删除、修改操∶
+Object put(Object key，0bject value)∶将指定key-value添加到（或修改）当前map对象中 
+void putAll(Map m)∶将m中的所有key-value对存放到当前map 中 
+Object remove(Object key)∶移除指定key的key-value对，并返回value 
+void clear()∶，清空当前imap 中的所有数据元素查询的操∶
+    
+//元素查询
+Object get(Object key)∶获取指定key对应的value 
+boolean containsKey(Object key)∶ 是否包含指定的key 
+boolean containsValue（Object value）∶ 是否包含指定的value 
+int size()∶返回map key-value对的个数 
+boolean isEmpty()∶ 判/断当前map是否为空
+boolean equals(Object obj)∶ 判断当前map和参数对象obj是否相等元视图操作的方法∶
+    
+//元视图操作方法
+Set keySet()∶ 返回所有key构成的Set集合
+Collection values()∶ 返回所有value构成的Collection集合 
+Set entrySet()∶ 返回所有entry对象key-value对构成的Set集合
+
+    //转为Set和Collection后，可以用iterator进行遍历
+    //Entry类有getKey()和getValue()
+```
+
+
+
+```java
+        //遍历所有的key-value
+        //方式一
+        Set entrySet = map.entrySet();
+        Iterator iterator = entrySet.iterator();
+        while (iterator.hasNext()){
+            Object obj = iterator.next();
+            //entrySet集合中的元素都是entry
+            Map.Entry entry = (Map.Entry)obj;
+            System.out.println(entry.getKey()+"----->"+entry.getValue());
+        }
+```
+
+
+
 
 
 ### 实现类—HashMap
+
+> 作为Map的主要实现类；线程不安全，效率高；可以存储`key为null`或者`value为null`的数据
 
 
 
 
 
 ### 实现类—LinkedHashMap
+
+> 保证在遍历map元素时，可以按照添加的顺序实现遍历。
+
+```java
+@Test
+public void test(){
+    LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
+    map.put(123,"AA");
+    map.put(456,"BB");
+    map.put(789,"CC");
+    System.out.println(map);
+}
+```
 
 
 
@@ -588,29 +673,11 @@ public void test2(){
 
 
 
-## `ArrayList`、`LinkedList`、`Vector`三者的异同
-
-相同：三个类都实现了List接口，都是存储有序、可重复的数据
-
-不同：
-
-- `ArrayList`：List接口的主要实现类；线程不安全，效率高；底层使用Object[ ]存储。
-- `LinkedList`：对于频繁的插入、删除操作，使用此类比`ArrayList`高；底层使用双层链表存储。
-- `Vector`：List接口的古老实现类；线程安全，效率低；底层使用Object[ ]存储。
 
 
 
 
-
-## `HashSet`、`LinkedHashSet`、`TreeSet`三者的异同
-
-- `HashSet`：作为Set接口的主要实现类；线程不安全；可以存储Null值
-  - `LinkedHashSet`：作为`HashSet`的子类；遍历内部数据时，可以按照添加的顺序遍历；对于频繁的遍历操作，`LinkedHashSet`高于`HashSet`
-- `TreeSet`：可以按照添加元素的指定属性，进行排序
-
-
-
-## Map中的异同
+## Map中各类的异同
 
 - `HashMap`：作为Map的主要实现类；线程不安全，效率高；可以存储`key为null`或者`value为null`的数据
 
@@ -684,7 +751,11 @@ map.put(key1,value1);
 		- 如果`equals()`返回`false`，此时的`key1-value1`添加成功
 		- 如果`equals()`返回`true`，则使用`value1`替换此`相同key`的value值【即修改value值】
 
+> 当超出临界值（且要存放的位置非空时），扩容。
+>
 > 默认扩容方式：扩容为原来的两倍，并将原本的数据复制过来
+
+
 
  **相较JDK-7，JDK-8的区别**
 
@@ -699,3 +770,33 @@ map.put(key1,value1);
 	- 当数组的某一个索引位置的元素，以链表形式存在的数据个数 > 8且当前数组的长度 > 64时，
 
 		此时此索引位置上所有数据改为使用红黑树存储
+	
+- JDK-7是头插法，JDK-8是尾插法
+
+
+
+
+
+### HashMap底层参数
+
+- DEFAULT_INITTAL_CAPACITY∶HashMap的默认容量，16 
+
+- DEFAULT_LOAD_FACTOR∶ HashMap的默认加载因子∶ 0.75 
+
+- threshold∶扩容的临界值，=容量*填充因子∶ 16 *0.75 =>12 
+
+- TREEIFY_THRESHOLD∶ Bucket 中链表长度大于该默认值，转化为红黑树∶8 
+
+- MIN_TREEIFY_CAPACITY∶桶中的Node被树化时最小的hash表容量∶64
+
+
+
+- table∶存储元素的数组，总是2的n次幂 entrySet∶存储具体元素的集
+
+- size∶HashMap中存储的键值对的数量 
+
+- modCount∶ HashMap扩容和结构改变的次数 
+
+- threshold∶扩容的临界值，=容量*填充因子 
+
+- loadFactor∶ 填充因子
