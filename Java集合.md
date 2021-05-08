@@ -244,15 +244,7 @@
 
 
 
-### `ArrayList`、`LinkedList`、`Vector`三者的异同
 
-相同：三个类都实现了List接口，都是存储有序、可重复的数据
-
-不同：
-
-- `ArrayList`：List接口的主要实现类；线程不安全，效率高；底层使用Object[ ]存储。
-- `LinkedList`：对于频繁的插入、删除操作，使用此类比`ArrayList`高；底层使用双层链表存储。
-- `Vector`：List接口的古老实现类；线程安全，效率低；底层使用Object[ ]存储。
 
 
 
@@ -374,12 +366,6 @@ List三种遍历方式
 - 不可重复性：保证添加的元素，按照equals方法判断时，不能返回true
 
   
-
-### `HashSet`、`LinkedHashSet`、`TreeSet`三者的异同
-
-- `HashSet`：作为Set接口的主要实现类；线程不安全；可以存储Null值
-  - `LinkedHashSet`：作为`HashSet`的子类；遍历内部数据时，可以按照添加的顺序遍历；对于频繁的遍历操作，`LinkedHashSet`高于`HashSet`
-- `TreeSet`：可以按照添加元素的指定属性，进行排序
 
 
 
@@ -586,8 +572,15 @@ Set entrySet()∶ 返回所有entry对象key-value对构成的Set集合
 
 
 ```java
-        //遍历所有的key-value
-        //方式一
+//遍历所有的key-value
+//方式一,使用entrySet()得到所有entry对象，再逐个获取值
+	@Test
+    public void test(){
+        LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
+        map.put(123,"AA");
+        map.put(456,"BB");
+        map.put(789,"CC");
+        
         Set entrySet = map.entrySet();
         Iterator iterator = entrySet.iterator();
         while (iterator.hasNext()){
@@ -596,7 +589,12 @@ Set entrySet()∶ 返回所有entry对象key-value对构成的Set集合
             Map.Entry entry = (Map.Entry)obj;
             System.out.println(entry.getKey()+"----->"+entry.getValue());
         }
+    }
+
+//方式二,使用keySet()得到所有key，再逐个获取key对应的value
 ```
+
+
 
 
 
@@ -635,27 +633,170 @@ public void test(){
 >
 > `TreeMap`两种排序方法：自然排序和定制排序，默认自然排序。添加元素时自动排序。
 
+```java
+//自然排序，实现Map中自定义类继承Comparable接口，重写里的compareTo方法
+
+```
+
+
+
+
+
+```java
+//定制排序
+    @Test
+    public void test2(){
+        TreeMap treeMap = new TreeMap<>(new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof Person && o2 instanceof Person){
+                    Person p1 = (Person)o1;
+                    Person p2 = (Person)o2;
+                    return Integer.compare(p1.getAge(),p2.getAge());
+                }
+                throw new RuntimeException("输入类型不匹配");
+            }
+        });
+    }
+```
+
 
 
 ### 实现类—Hashtable（根本不用）
 
-> 子类—Properties
+> 作为古老的实现类；
+>
+> 线程安全，效率低；
+>
+> 不可以存储`key为null`或者`value为null`的数据
+
+
+
+### 实现类—Properties
+
+> Hashtable的子类
+
+```java
+//properties文件
+//不能为了好看加空格
+name=Tom
+password=abc123
+```
+
+
+
+```java
+public class HashMapTest {
+    public static void main(String[] args)  {
+        Properties pros = new Properties();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream("jdbc.properties");
+            
+            //加载流对应文件
+            pros.load(fis);
+            
+            String name = pros.getProperty("name");
+            String password = pros.getProperty("password");
+            System.out.println("name="+name+",password="+password);
+            //name=Tom,password=abc123
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
 
 
 
 
 
+# Collections工具类
+
+> Collections 是一个操作 Set、List 和 Map 等集合的工具类
+>
+> Collections 中提供了一系列静态的方法对集合元素进行排序、查询和修改等操作，还提供了对集合对象设置不可变、对集合对象实现同步控制等方法
+
+
+
+## 排序操作∶（均为static方法）
+
+```java
+reverse(List)∶ 反转 List 中元素的顺序
+
+shuffle(List)∶ 对 List 集合元素进行随机排序	//例:Collections.shuffle(l1);
+
+sort(List)∶ 根据元素的自然顺序对指定 List 集合元素按升序排序
+
+sort(List，Comparator)∶根据指定的 Comparator 产生的顺序对 List 集合元素进行排序
+
+swap(List，int， int)∶ 将指定 list 集合中的i处元素和 j 处元素进行交换
+```
+
+
+
+```java
+@Test
+    public void test5(){
+        ArrayList coll = new ArrayList();
+        coll.add(123);
+        coll.add("456");
+        coll.add(789);
+
+        //copy()的使用
+        /* 不能如下的方式使用copy，
+        List dest = new ArrayList();
+        Collections.copy(dest,coll);
+        
+        因为此时dest的底层数据size为0，调用copy(),由于小于源列表，会报异常
+        if (srcSize > dest.size())
+            throw new IndexOutOfBoundsException("Source does not fit in dest");
+         */
+        //如下，此时新建Object类型数组，默认值为null，然后转成list
+        List dest =  Arrays.asList(new Object[coll.size()]);
+        System.out.println(dest.size());
+        Collections.copy(dest,coll);
+        System.out.println(dest);
+    }
+```
 
 
 
 
 
+## 查找、替换
+
+```java
+Object max(Collection)∶根据元素的自然顺序，返回给定集合中的最大元素
+Object max(Collection，Comparator)∶根据 Comparator指定的顺序，返回给定集合中的最大元素
+    
+Object min(Collection)
+Object min(Collection,Comparator)
+
+int frequency(Collection Object)∶返回指定集合中指定元素的出现次数
+void copy(List dest，List src)∶将src中的内容复制到dest中
+
+boolean replaceAll(List list，Object oldVal，Object newVal):使用新值替换 List 对象的所有旧值
+```
 
 
 
+## 同步控制
 
+`Collections`类提供了多个`synchronizedXxx()`方法，
 
+该方法可使将指定集合包装成线程同步的集合，从而解决多线程并发访问集合时的线程安全问题
 
+```java
+//例如,返回的list就是线程安全
+List list = Collections.synchronizedList(l1)
+```
 
 
 
@@ -673,7 +814,25 @@ public void test(){
 
 
 
+## `ArrayList`、`LinkedList`、`Vector`三者的异同
 
+相同：三个类都实现了List接口，都是存储有序、可重复的数据
+
+不同：
+
+- `ArrayList`：List接口的主要实现类；线程不安全，效率高；底层使用Object[ ]存储。
+- `LinkedList`：对于频繁的插入、删除操作，使用此类比`ArrayList`高；底层使用双层链表存储。
+- `Vector`：List接口的古老实现类；线程安全，效率低；底层使用Object[ ]存储。
+
+
+
+
+
+## `HashSet`、`LinkedHashSet`、`TreeSet`三者的异同
+
+- `HashSet`：作为Set接口的主要实现类；线程不安全；可以存储Null值
+  - `LinkedHashSet`：作为`HashSet`的子类；遍历内部数据时，可以按照添加的顺序遍历；对于频繁的遍历操作，`LinkedHashSet`高于`HashSet`
+- `TreeSet`：可以按照添加元素的指定属性，进行排序
 
 
 
@@ -693,7 +852,7 @@ public void test(){
 
 - `HashTable`：作为古老的实现类；线程安全，效率低；不可以存储`key为null`或者`value为null`的数据
 
-  - Properties
+  - Properties：常用来处理配置文件。key和value都是Stirng类型
 
 
 
@@ -800,3 +959,6 @@ map.put(key1,value1);
 - threshold∶扩容的临界值，=容量*填充因子 
 
 - loadFactor∶ 填充因子
+
+
+
